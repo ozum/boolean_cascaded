@@ -1,0 +1,25 @@
+{
+    "name": "boolean_cascaded",
+    "abstract": "PostgreSQL extension to store cascaded status for parent-children.",
+    "description": "PostgreSQL Extension of data type, trigger and operators to store cascaded status for parent-children records.",
+    "version": "1.0.0",
+    "maintainer": "Özüm Eldoğan",
+    "license": "postgresql",
+    "provides": {
+        "boolean_cascaded": {
+            "abstract": "PostgreSQL Extension of data type, trigger and operators to store cascaded status for parent-children records.",
+            "file": "sql/boolean_cascaded.sql",
+            "docfile": "README.md",
+            "version": "1.0.0"
+        }
+    },
+    "release_status": "unstable",
+
+    "generated_by": "The maintainer's name",
+
+
+    "meta-spec": {
+        "version": "1.0.0",
+        "url": "http://pgxn.org/meta/spec.txt"
+    }
+}
