@@ -1,25 +1,13 @@
-\set ECHO 0
-BEGIN;
-\i sql/boolean_cascaded.sql
-\set ECHO all
+\set ECHO none
+\set QUIET 1
+-- Turn off echo and keep things quiet.
 
--- You should write your tests
+-- Format the output for nice TAP.
+\pset format unaligned
+\pset tuples_only true
+\pset pager
 
-SELECT boolean_cascaded('foo', 'bar');
-
-SELECT 'foo' #? 'bar' AS arrowop;
-
-CREATE TABLE ab (
-    a_field boolean_cascaded
-);
-
-INSERT INTO ab VALUES('foo' #? 'bar');
-SELECT (a_field).a, (a_field).b FROM ab;
-
-SELECT (boolean_cascaded('foo', 'bar')).a;
-SELECT (boolean_cascaded('foo', 'bar')).b;
-
-SELECT ('foo' #? 'bar').a;
-SELECT ('foo' #? 'bar').b;
-
-ROLLBACK;
+-- Revert all changes on failure.
+\set ON_ERROR_ROLLBACK 1
+\set ON_ERROR_STOP true
+\set QUIET 1

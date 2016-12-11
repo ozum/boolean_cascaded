@@ -2,7 +2,7 @@
     "name": "boolean_cascaded",
     "abstract": "PostgreSQL extension to store cascaded status for parent-children.",
     "description": "PostgreSQL Extension of data type, trigger and operators to store cascaded status for parent-children records.",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "maintainer": "Özüm Eldoğan",
     "license": "postgresql",
     "provides": {
