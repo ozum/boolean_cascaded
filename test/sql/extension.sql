@@ -412,18 +412,23 @@ DECLARE
 	v_fk						INTEGER;
     v_pk						INTEGER;
     v_delta						INTEGER := 0;
-    v_result					INTEGER := 0;
-BEGIN  
-    IF p_parent_tables_and_cols IS NULL THEN
-    	RETURN NEW;
-    END IF;
-    
-    
-    IF TG_OP = 'UPDATE' THEN
-        RAISE NOTICE 'CP 1';
-        EXECUTE FORMAT('SELECT $1.%I, $2.%1$I', p_status_col) INTO v_old, v_new USING OLD, NEW;
+	v_result					INTEGER := 0;
+BEGIN
+	RAISE NOTICE 'TRIGGER (%): %, %.id: %', TG_NAME, TG_OP, TG_TABLE_NAME, NEW.id;
 
+    IF TG_OP = 'UPDATE' THEN
+    	EXECUTE FORMAT('SELECT $1.%I, $2.%1$I', p_status_col) INTO v_old, v_new USING OLD, NEW;
+    ELSIF TG_OP = 'INSERT' THEN
+    	EXECUTE FORMAT('SELECT $1.%I', p_status_col) INTO v_new USING NEW;
+    END IF;
+
+
+
+    IF p_parent_tables_and_cols IS NOT NULL AND TG_OP = 'UPDATE' THEN
+        RAISE NOTICE 'CP 1';
+        --EXECUTE FORMAT('SELECT $1.%I, $2.%1$I', p_status_col) INTO v_old, v_new USING OLD, NEW;
         FOREACH v_table_and_col SLICE 1 IN ARRAY p_parent_tables_and_cols LOOP
+            v_parent_table := v_table_and_col[1];
             v_fk_col := COALESCE(v_table_and_col[2], boolcas_fk_name(TG_TABLE_NAME, v_parent_table, v_camel));
             --RAISE EXCEPTION 'IS CHANGED: %, %, %, %', OLD."parentId", NEW."parentId", OLD."categoryId", NEW."categoryId";-- v_fk_col;--FORMAT('SELECT v_parent_changed OR OLD.%1$I IS DISTINCT FROM NEW.%1$I', v_fk_col);
          EXECUTE FORMAT('SELECT $1 OR $2.%1$I IS DISTINCT FROM $3.%1$I', v_fk_col) INTO v_parent_changed USING v_parent_changed, OLD, NEW;
@@ -433,30 +438,32 @@ BEGIN
 --RAISE EXCEPTION 'Parent Changed: %', v_parent_changed;
 
 	IF v_parent_changed OR TG_OP = 'INSERT' THEN	-- UPDATE with parent change OR INSERT
-        RAISE NOTICE 'CP 2';    	
-        EXECUTE FORMAT('SELECT $1.%I', p_status_col) INTO v_new USING NEW;
-        
+        RAISE NOTICE 'CP 2a';
+        --EXECUTE FORMAT('SELECT $1.%I', p_status_col) INTO v_new USING NEW;
+
         IF TG_OP = 'INSERT' AND v_new > 1 THEN RAISE EXCEPTION '"%" column accepts Boolean values.', p_status_col; END IF;
 
-        FOREACH v_table_and_col SLICE 1 IN ARRAY p_parent_tables_and_cols LOOP
-			v_parent_table := v_table_and_col[1];
-            v_fk_col       := COALESCE(v_table_and_col[2], boolcas_fk_name(TG_TABLE_NAME, v_parent_table, v_camel));
-            v_pk_col       := COALESCE(v_table_and_col[3], 'id');
-            EXECUTE FORMAT('SELECT $1.%I, $1.%I', v_fk_col, v_pk_col) INTO v_fk, v_pk USING NEW;
-            
-            IF (TG_TABLE_NAME = v_parent_table AND v_fk = v_pk) THEN
-            	RAISE EXCEPTION 'boolean_cascaded reference error in %(). Column references itself.', TG_NAME;
-            END IF;
-            
-            IF v_fk IS NOT NULL THEN
-        		EXECUTE FORMAT('SELECT %I FROM %I WHERE %I = $1', p_status_col, v_parent_table, v_pk_col) INTO v_delta USING v_fk;
-            	v_result := v_result + ((v_delta / 10) + (v_delta % 10)) * 10;
-                IF v_result > 990 THEN
-    				RAISE EXCEPTION 'boolean_cascaded stack overflow in %(). Perhaps you have a circular reference.', TG_NAME;
-    			END IF;
-            END IF;
-            RAISE NOTICE 'Parent Total: %', v_result;
-    	END LOOP;
+		IF p_parent_tables_and_cols IS NOT NULL THEN
+            FOREACH v_table_and_col SLICE 1 IN ARRAY p_parent_tables_and_cols LOOP
+                v_parent_table := v_table_and_col[1];
+                v_fk_col       := COALESCE(v_table_and_col[2], boolcas_fk_name(TG_TABLE_NAME, v_parent_table, v_camel));
+                v_pk_col       := COALESCE(v_table_and_col[3], 'id');
+                EXECUTE FORMAT('SELECT $1.%I, $1.%I', v_fk_col, v_pk_col) INTO v_fk, v_pk USING NEW;
+
+                IF (TG_TABLE_NAME = v_parent_table AND v_fk = v_pk) THEN
+                    RAISE EXCEPTION 'boolean_cascaded reference error in %(). Column references itself.', TG_NAME;
+                END IF;
+
+                IF v_fk IS NOT NULL THEN
+                    EXECUTE FORMAT('SELECT %I FROM %I WHERE %I = $1', p_status_col, v_parent_table, v_pk_col) INTO v_delta USING v_fk;
+                    v_result := v_result + ((v_delta / 10) + (v_delta % 10)) * 10;
+                    IF v_result > 990 THEN
+                        RAISE EXCEPTION 'boolean_cascaded stack overflow in %(). Perhaps you have a circular reference.', TG_NAME;
+                    END IF;
+                END IF;
+                RAISE NOTICE 'Parent Total: %', v_result;
+            END LOOP;
+        END IF;
 
  		RAISE NOTICE 'A0. OLD: %, NEW: %, RESULT: %', v_old, v_new, v_result;
         IF v_new = -2 THEN -- FALSE
@@ -466,34 +473,35 @@ BEGIN
         END IF;
 
     --ELSIF v_new 	-- Parent değişmeyen update işlemi ise
-        -- Yeni değer -1 (TRUE) veya -2 (FALSE) geldiyse 
+        -- Yeni değer -1 (TRUE) veya -2 (FALSE) geldiyse
     ELSIF v_new < 0 THEN
-            RAISE NOTICE 'CP 3';
-            -- Birler basamağını yut (Integer / 10 * 10) ve yeni değeri birler basamağına yaz. Ör: False ise 20'yi 21 yap. 
+            RAISE NOTICE 'CP 2b';
+            -- Birler basamağını yut (Integer / 10 * 10) ve yeni değeri birler basamağına yaz. Ör: False ise 20'yi 21 yap.
             v_result := CASE v_new WHEN -1 THEN (v_old / 10 * 10) WHEN -2 THEN (v_old / 10 * 10) + 1 END;
         --END IF;
     ELSE
-    	RETURN NEW;    
+        RAISE NOTICE 'CP 2c';
+    	RETURN NEW;
     END IF;
-    
-    
 
-    
-    
+
+
+
+
     RAISE NOTICE 'A. OLD: %, NEW: %, RESULT: %', v_old, v_new, v_result;
-    
-    -- Yeni değer -1 (TRUE) veya -2 (FALSE) geldiyse 
+
+    -- Yeni değer -1 (TRUE) veya -2 (FALSE) geldiyse
     --IF v_new < 0 THEN
       --  RAISE NOTICE 'CP 3';
-        -- Birler basamağını yut (Integer / 10 * 10) ve yeni değeri birler basamağına yaz. Ör: False ise 20'yi 21 yap. 
+        -- Birler basamağını yut (Integer / 10 * 10) ve yeni değeri birler basamağına yaz. Ör: False ise 20'yi 21 yap.
         --v_result := CASE v_new WHEN -1 THEN (v_result / 10 * 10) WHEN -2 THEN (v_result / 10 * 10) + 1 END;
     --END IF;
-    
+
     RAISE NOTICE 'B. OLD: %, NEW: %, RESULT: %', v_old, v_new, v_result;
      RAISE NOTICE 'C: NEW: %', NEW."isActive";
-    
+
     IF v_new IS DISTINCT FROM v_result THEN
-    	RAISE NOTICE 'CP 4';
+    	RAISE NOTICE 'CP 3';
         -- Yeni değeri ROW'a ata.
         IF p_status_col = 'xisActive' THEN
         	NEW."isActive" := v_result;
@@ -501,13 +509,15 @@ BEGIN
         	NEW.is_active := v_result;
         ELSE
 
-            --RAISE EXCEPTION '%, %', v_new, format('%I=>%s', p_status_col, v_result);
-        	NEW := NEW #= format('%I=>%s', p_status_col, v_result)::hstore;
+            RAISE NOTICE '% ID: %, %, %', TG_TABLE_NAME, NEW.id, v_new, format('%I=>%s', p_status_col, v_result);
+        	--IF v_result IS NOT NULL THEN
+                NEW := NEW #= format('%I=>%s', p_status_col, v_result)::hstore;
+            --END IF;
         END IF;
     END IF;
-    
+
     RAISE NOTICE 'D: NEW: %', NEW."isActive";
-    
+
     RETURN NEW;
 END;
 $body$
@@ -528,14 +538,14 @@ olmasına göre)
 boolean_cascaded veri tipinde -1 (TRUE) veya -2 (FALSE) değeri set edildiyse
 cascade edilmiş değerlere dokunmadan ilgili alanı güncelleyen trigger.
 
-Before Each Row olarak çağrılmalı ve condition olarak ilgili alanın güncellenmesi 
+Before Each Row olarak çağrılmalı ve condition olarak ilgili alanın güncellenmesi
 ve yeni değerinin 0''dan küçük olması verilmeli.
 
 Örnek:
 
 CREATE TRIGGER "ItemCategoryTrigger"
-  BEFORE UPDATE OF "isActive" 
-  ON "ItemCategory" FOR EACH ROW 
+  BEFORE UPDATE OF "isActive"
+  ON "ItemCategory" FOR EACH ROW
   WHEN (new."isActive" < 0)
 EXECUTE PROCEDURE t_boolean_cascaded_before();';
 

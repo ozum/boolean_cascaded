@@ -21,8 +21,8 @@ psql -f $file_dir/sql/create-db.sql -U user -d $db --no-password --echo-errors -
 psql -f $file_dir/sql/create-test-objects.sql -U user -d $db --no-password --echo-errors -q;
 
 # Test DB
-psql -d $db -Xf $file_dir/*.sql;
-#pg_prove -d $db -U user $file_dir/*.sql;
+#psql -d $db -Xf $file_dir/*.sql;
+pg_prove -d $db -U user $file_dir/*.sql;
 #pg_prove -d $db -U user $file_dir/002-cache_recursive.sql;
 #pg_prove -d $db -U user $file_dir/002c-cache_recursive.sql;
 #psql -f $file_dir/utility/data_bulk.sql -U user -d $db --no-password --echo-errors -q;
