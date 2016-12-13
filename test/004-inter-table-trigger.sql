@@ -33,69 +33,49 @@ SELECT results_eq('SELECT "isActive"::INTEGER FROM "Item" ORDER BY id',
 
 
 ------------------------------------ UPDATE ITEM --------------------------------------
-
-
 UPDATE "Item" SET "isActive" = FALSE WHERE id = 4;
-
 SELECT results_eq('SELECT "isActive"::INTEGER FROM "Item" ORDER BY id',
     ARRAY[1, 11, 20, 51],
     'Update Item 1');
 
-
 UPDATE "Item" SET "isActive" = TRUE WHERE id = 4;
-
 SELECT results_eq('SELECT "isActive"::INTEGER FROM "Item" ORDER BY id',
     ARRAY[1, 11, 20, 50],
     'Update Item 2');
 
-
 UPDATE "Item" SET "isActive" = FALSE WHERE id = 4;
-
 SELECT results_eq('SELECT "isActive"::INTEGER FROM "Item" ORDER BY id',
     ARRAY[1, 11, 20, 51],
     'Update Item 3');
 
-
 UPDATE "Item" SET "isActive" = TRUE WHERE id = 2;
-
 SELECT results_eq('SELECT "isActive"::INTEGER FROM "Item" ORDER BY id',
     ARRAY[1, 10, 20, 41],
     'Update Item 4');
 
 UPDATE "Item" SET "isActive" = FALSE WHERE id = 2;
-
 SELECT results_eq('SELECT "isActive"::INTEGER FROM "Item" ORDER BY id',
     ARRAY[1, 11, 20, 51],
     'Update Item 4');
 
-
 ------------------------------------ UPDATE CATEGORY --------------------------------------
-
 UPDATE "Category" SET "isActive" = TRUE WHERE id = 1;
-
 SELECT results_eq('SELECT "isActive"::INTEGER FROM "Item" ORDER BY id',
     ARRAY[1, 11, 10, 41],
     'Update Category 1');
 
-
 UPDATE "Category" SET "isActive" = FALSE WHERE id = 1;
-
 SELECT results_eq('SELECT "isActive"::INTEGER FROM "Item" ORDER BY id',
     ARRAY[1, 11, 20, 51],
     'Update Category 2');
 
-
 ------------------------------------ UPDATE COLOR --------------------------------------
-
 UPDATE "Color" SET "isActive" = TRUE WHERE id = 2;
-
 SELECT results_eq('SELECT "isActive"::INTEGER FROM "Item" ORDER BY id',
     ARRAY[1, 1, 10, 31],
     'Update Color 1');
 
-
 UPDATE "Color" SET "isActive" = FALSE WHERE id = 2;
-
 SELECT results_eq('SELECT "isActive"::INTEGER FROM "Item" ORDER BY id',
     ARRAY[1, 11, 20, 51],
     'Update Color 1');

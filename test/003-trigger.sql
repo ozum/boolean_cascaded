@@ -15,14 +15,12 @@ SELECT results_eq('SELECT "isActive"::INTEGER FROM "Category" ORDER BY id',
 
 
 UPDATE "Category" SET "isActive" = FALSE WHERE id = 3;
-
 SELECT results_eq('SELECT "isActive"::INTEGER FROM "Category" ORDER BY id',
     ARRAY[1, 0, 11, 21],
     'Update to false');
 
 
 UPDATE "Category" SET "isActive" = TRUE WHERE id IN (1, 4);
-
 SELECT results_eq('SELECT "isActive"::INTEGER FROM "Category" ORDER BY id',
     ARRAY[0, 0, 1, 10],
     'Update to true');

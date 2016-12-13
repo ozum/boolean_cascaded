@@ -1,6 +1,6 @@
 ﻿/*
 Created: 9.12.2016
-Modified: 11.12.2016
+Modified: 13.12.2016
 Project: Boolean Cascaded Test DB
 Model: Boolean Cascaded Test DB
 Database: PostgreSQL 9.5
@@ -46,9 +46,8 @@ CREATE TRIGGER "boolean_cascaded_before"
 ;
 
 CREATE TRIGGER "boolean_cascaded_after"
-  AFTER UPDATE OF "isActive"
+  AFTER UPDATE
   ON "Item" FOR EACH ROW
- WHEN (OLD."isActive" IS DISTINCT FROM NEW."isActive")
  EXECUTE PROCEDURE "t_boolcas_children_after"('{{Item}}')
 ;
 
@@ -80,9 +79,8 @@ CREATE TRIGGER "boolean_cascaded_before"
 ;
 
 CREATE TRIGGER "boolean_cascaded_after"
-  AFTER UPDATE OF "isActive"
+  AFTER UPDATE
   ON "Category" FOR EACH ROW
- WHEN (OLD."isActive" IS DISTINCT FROM NEW."isActive")
  EXECUTE PROCEDURE "t_boolcas_children_after"('{{Category, parentId}, {Item, categoryId}}')
 ;
 
@@ -108,9 +106,8 @@ CREATE TRIGGER "boolean_cascaded_before"
 ;
 
 CREATE TRIGGER "boolean_cascaded_after"
-  AFTER UPDATE OF "isActive"
+  AFTER UPDATE
   ON "Color" FOR EACH ROW
- WHEN (OLD."isActive" IS DISTINCT FROM NEW."isActive")
  EXECUTE PROCEDURE "t_boolcas_children_after"('{{Item}}')
 ;
 

@@ -1,1 +1,2 @@
 CREATE EXTENSION pgtap;
+CREATE EXTENSION boolean_cascaded;

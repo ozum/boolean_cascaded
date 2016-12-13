@@ -16,9 +16,9 @@ db="boolean-cascaded-test-5291";
 # Create test db
 createdb -h 127.0.0.1 -U user --no-password $db;
 
-psql -f $file_dir/sql/extension.sql -U user -d $db --no-password --echo-errors -q;
-psql -f $file_dir/sql/create-db.sql -U user -d $db --no-password --echo-errors -q;
+# psql -f $file_dir/sql/extension.sql -U user -d $db --no-password --echo-errors -q;
 psql -f $file_dir/sql/create-test-objects.sql -U user -d $db --no-password --echo-errors -q;
+psql -f $file_dir/sql/create-db.sql -U user -d $db --no-password --echo-errors -q;
 
 # Test DB
 #psql -d $db -Xf $file_dir/*.sql;
