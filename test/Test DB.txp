@@ -435,7 +435,7 @@
 			<Company></Company>
 			<Version></Version>
 			<CreatedDate>2016-12-09T11:21:31.000+03:00</CreatedDate>
-			<ModifiedDate>2016-12-15T15:52:30.650+03:00</ModifiedDate>
+			<ModifiedDate>2016-12-15T15:59:24.103+03:00</ModifiedDate>
 			<Project>Boolean Cascaded Test DB</Project>
 			<Description></Description>
 		</ModelTitlePG95>
@@ -690,7 +690,7 @@
 			<Id>{84BBBBD1-27DB-4D04-AD17-167316C0F259}</Id>
 			<Name>Item</Name>
 			<Ordinal>0</Ordinal>
-			<GlobalOrder>5</GlobalOrder>
+			<GlobalOrder>4</GlobalOrder>
 			<GalleryItemID>{00000000-0000-0000-0000-000000000000}</GalleryItemID>
 			<GalleryID>{00000000-0000-0000-0000-000000000000}</GalleryID>
 			<GalleryObjectID>{00000000-0000-0000-0000-000000000000}</GalleryObjectID>
@@ -1212,8 +1212,8 @@
 					</Function>
 					<FunctionArguments>'{{Item}}'</FunctionArguments>
 					<EventTruncate>0</EventTruncate>
-					<WhenCondition>OLD."isActive" IS DISTINCT FROM NEW."isActive"</WhenCondition>
-					<EventUpdateColumns>"isActive"</EventUpdateColumns>
+					<WhenCondition></WhenCondition>
+					<EventUpdateColumns></EventUpdateColumns>
 				</PERTriggerEntityPG95>
 			</Triggers>
 			<DbOwner/>
@@ -1262,7 +1262,7 @@
 			<Id>{5B5F28B6-A887-4872-B24D-2A5D29EF1FF8}</Id>
 			<Name>Category</Name>
 			<Ordinal>0</Ordinal>
-			<GlobalOrder>6</GlobalOrder>
+			<GlobalOrder>5</GlobalOrder>
 			<GalleryItemID>{00000000-0000-0000-0000-000000000000}</GalleryItemID>
 			<GalleryID>{00000000-0000-0000-0000-000000000000}</GalleryID>
 			<GalleryObjectID>{00000000-0000-0000-0000-000000000000}</GalleryObjectID>
@@ -1588,8 +1588,8 @@
 					</Function>
 					<FunctionArguments>'{{Category, parentId}, {Item, categoryId}}'</FunctionArguments>
 					<EventTruncate>0</EventTruncate>
-					<WhenCondition>OLD."isActive" IS DISTINCT FROM NEW."isActive"</WhenCondition>
-					<EventUpdateColumns>"isActive"</EventUpdateColumns>
+					<WhenCondition></WhenCondition>
+					<EventUpdateColumns></EventUpdateColumns>
 				</PERTriggerEntityPG95>
 			</Triggers>
 			<DbOwner/>
@@ -1638,7 +1638,7 @@
 			<Id>{26271311-9ED2-44CB-8F18-0621A6ADA064}</Id>
 			<Name>Color</Name>
 			<Ordinal>0</Ordinal>
-			<GlobalOrder>7</GlobalOrder>
+			<GlobalOrder>6</GlobalOrder>
 			<GalleryItemID>{00000000-0000-0000-0000-000000000000}</GalleryItemID>
 			<GalleryID>{00000000-0000-0000-0000-000000000000}</GalleryID>
 			<GalleryObjectID>{00000000-0000-0000-0000-000000000000}</GalleryObjectID>
@@ -1858,8 +1858,8 @@
 					</Function>
 					<FunctionArguments>'{{Item}}'</FunctionArguments>
 					<EventTruncate>0</EventTruncate>
-					<WhenCondition>OLD."isActive" IS DISTINCT FROM NEW."isActive"</WhenCondition>
-					<EventUpdateColumns>"isActive"</EventUpdateColumns>
+					<WhenCondition></WhenCondition>
+					<EventUpdateColumns></EventUpdateColumns>
 				</PERTriggerEntityPG95>
 			</Triggers>
 			<DbOwner/>
@@ -1910,7 +1910,7 @@
 			<Id>{B2C31C43-0ACE-4DDF-ACD2-90C0E85D7879}</Id>
 			<Name>boolean_cascaded</Name>
 			<Ordinal>0</Ordinal>
-			<GlobalOrder>4</GlobalOrder>
+			<GlobalOrder>3</GlobalOrder>
 			<GalleryItemID>{00000000-0000-0000-0000-000000000000}</GalleryItemID>
 			<GalleryID>{00000000-0000-0000-0000-000000000000}</GalleryID>
 			<GalleryObjectID>{00000000-0000-0000-0000-000000000000}</GalleryObjectID>
@@ -2209,7 +2209,7 @@
 			<Id>{17EBBF9F-26A2-412C-BC4C-38519800A5D9}</Id>
 			<Name>t_boolcas_children_after</Name>
 			<Ordinal>0</Ordinal>
-			<GlobalOrder>2</GlobalOrder>
+			<GlobalOrder>1</GlobalOrder>
 			<GalleryItemID>{00000000-0000-0000-0000-000000000000}</GalleryItemID>
 			<GalleryID>{00000000-0000-0000-0000-000000000000}</GalleryID>
 			<GalleryObjectID>{00000000-0000-0000-0000-000000000000}</GalleryObjectID>
@@ -2252,7 +2252,7 @@ END</SQL>
 			<Id>{0D12375C-D086-4E77-BCBB-0F9AC4B7F931}</Id>
 			<Name>t_boolcas_before</Name>
 			<Ordinal>0</Ordinal>
-			<GlobalOrder>3</GlobalOrder>
+			<GlobalOrder>2</GlobalOrder>
 			<GalleryItemID>{00000000-0000-0000-0000-000000000000}</GalleryItemID>
 			<GalleryID>{00000000-0000-0000-0000-000000000000}</GalleryID>
 			<GalleryObjectID>{00000000-0000-0000-0000-000000000000}</GalleryObjectID>
